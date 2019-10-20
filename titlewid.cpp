@@ -82,7 +82,7 @@ void titlewid::mouseMoveEvent(QMouseEvent* event)
      if(Qt::LeftButton == event->button())
      {
          QPoint pos = event->pos();
-        if(pos.x() > ui->icon->pos().x() && pos.x() < ui->tools->pos().x())
+        if(pos.x() > ui->icon->pos().x() && pos.x() < ui->widget->pos().x())
          {
              if(pos.y() > ui->title->pos().y() && pos.y() < ui->title->pos().y() + ui->title->rect().height())
              {

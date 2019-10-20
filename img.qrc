@@ -6,5 +6,6 @@
         <file>images/max.png</file>
         <file>images/mid.png</file>
         <file>images/min.png</file>
+        <file>images/search.png</file>
     </qresource>
 </RCC>
