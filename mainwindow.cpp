@@ -141,7 +141,9 @@ void MainWindow::moveAndResizeWindow(QPoint& pos)
       x = this->pos().x() + pos.x();
       y = this->pos().y();
       w = this->size().width() - pos.x();
+      qDebug() << "size:" << this->size().width();
       h = this->size().height();
+      qDebug() << "x:" << x <<" y:" << y << " w:" << w << " h:" << h;
      break;
    // 右边框被拉伸
   case LabelBorderStatus::toRight:
@@ -198,7 +200,8 @@ void MainWindow::moveAndResizeWindow(QPoint& pos)
       return;
   }
  // 改变窗口的大小和位置。
-  this->setGeometry(x,y,w,h);
+  if (w >= this->minimumWidth())
+    this->setGeometry(x,y,w,h);
 }
 
 // 根据边框Label的objectName， 确定拉伸的是哪个边框
