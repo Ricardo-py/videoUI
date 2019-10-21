@@ -312,7 +312,7 @@ border-left: none;</string>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(90, 90, 90);</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -325,7 +325,10 @@ border-left: none;</string>
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item>
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
        <widget class="QPushButton" name="pushButton">
         <property name="minimumSize">
          <size>
@@ -347,7 +350,7 @@ border-left: none;</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1">
        <widget class="QPushButton" name="pb_min">
         <property name="minimumSize">
          <size>
@@ -379,7 +382,7 @@ border-left: none;</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="2">
        <widget class="QPushButton" name="pb_mid_max">
         <property name="minimumSize">
          <size>
@@ -411,7 +414,7 @@ border-left: none;</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="3">
        <widget class="QPushButton" name="pb_close">
         <property name="minimumSize">
          <size>

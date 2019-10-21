@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "searchresult.h"
 #include <QPen>
 #include <QPainter>
 #include <QMouseEvent>
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_bPressed = false;  // 设置鼠标按下的状态
     mouseEvent = nullptr;  //设置鼠标事件的初始值
 
+    setSearchResult();
     setWindowFlag(Qt::FramelessWindowHint);
     //设置过滤器，8个Label作为边框，过滤的鼠标事件
     ui->lefttopLabel->installEventFilter(this);
@@ -236,6 +238,32 @@ void MainWindow::paintEvent(QPaintEvent* event)
 
 }
 
+
+void MainWindow::setSearchResult()
+{
+    QWidget *mainWidget = new QWidget();
+    QWidget *leftWidget = new QWidget();
+    leftWidget->setMinimumSize(50,0);
+    QWidget *rightWidget = new QWidget();
+    rightWidget->setMinimumSize(50,0);
+
+    QVBoxLayout *V = new QVBoxLayout(mainWidget);
+    QHBoxLayout *H = new QHBoxLayout(ui->scrollAreaWidgetContents);
+    searchresult *wt[10];
+
+    for (int i = 0; i < 10; i ++)
+    {
+        wt[i] = new searchresult();
+        wt[i] = new searchresult();
+        V->addWidget(wt[i]);
+    }
+    //ui->scrollAreaWidgetContents->setStyle();
+    this->setStyleSheet("background-color:rgb(90,90,90)");
+    H->addWidget(leftWidget);
+    H->addWidget(mainWidget);
+    H->addWidget(rightWidget);
+
+}
 MainWindow::~MainWindow()
 {
     delete ui;

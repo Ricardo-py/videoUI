@@ -27,15 +27,18 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    titlewid.cpp
+    titlewid.cpp \
+    searchresult.cpp
 
 HEADERS += \
         mainwindow.h \
-    titlewid.h
+    titlewid.h \
+    searchresult.h
 
 FORMS += \
         mainwindow.ui \
-    titlewid.ui
+    titlewid.ui \
+    searchresult.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

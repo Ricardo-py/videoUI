@@ -32,6 +32,7 @@ public:
     QPoint pLast;
 
     LabelBorderStatus testLabelBorder(QString _objectName);
+    void setSearchResult();
     void moveAndResizeWindow(QPoint& pos);
 
 private slots:
