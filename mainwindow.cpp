@@ -8,6 +8,9 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <iostream>
+#include <QtXml/QDomElement>
+#include <QtXml/QDomDocument>
+#include <QMovie>
 
 using namespace std;
 
@@ -21,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_bPressed = false;  // 设置鼠标按下的状态
     mouseEvent = nullptr;  //设置鼠标事件的初始值
 
-    setSearchResult();
+    init();
+    display_data();
+    //setSearchResult();
     setWindowFlag(Qt::FramelessWindowHint);
     //设置过滤器，8个Label作为边框，过滤的鼠标事件
     ui->lefttopLabel->installEventFilter(this);
@@ -48,6 +53,14 @@ MainWindow::MainWindow(QWidget *parent) :
                 qDebug() << "lineEdit的内容为:" << str;
                 this->download_data(str);
             });
+
+    connect(this,QOverload<>::of(&MainWindow::finish_download),
+            [=]()
+            {
+                qDebug() << "开始展示";
+                this->display_data();
+            });
+
     connect(ui->widget_2,SIGNAL(moveWindow(QPoint&)),this,SLOT(moveWindowEvent(QPoint&)));
 }
 
@@ -210,7 +223,7 @@ void MainWindow::moveAndResizeWindow(QPoint& pos)
       return;
   }
  // 改变窗口的大小和位置。
-  if (w >= this->minimumWidth())
+  if (w >= this->minimumWidth() && h >= this->minimumHeight())
     this->setGeometry(x,y,w,h);
 }
 
@@ -251,8 +264,7 @@ void MainWindow::paintEvent(QPaintEvent* event)
 
 }
 
-
-void MainWindow::setSearchResult()
+void MainWindow::init()
 {
     QWidget *mainWidget = new QWidget();
     QWidget *leftWidget = new QWidget();
@@ -260,8 +272,18 @@ void MainWindow::setSearchResult()
     QWidget *rightWidget = new QWidget();
     rightWidget->setMinimumSize(50,0);
 
-    QVBoxLayout *V = new QVBoxLayout(mainWidget);
-    QHBoxLayout *H = new QHBoxLayout(ui->scrollAreaWidgetContents);
+    V = new QVBoxLayout(mainWidget);
+    H = new QHBoxLayout(ui->scrollAreaWidgetContents);
+    //ui->scrollAreaWidgetContents->setStyle();
+   // this->setStyleSheet("background-color:rgb(90,90,90)");
+    H->addWidget(leftWidget);
+    H->addWidget(mainWidget);
+    H->addWidget(rightWidget);
+}
+
+void MainWindow::setSearchResult()
+{
+
     searchresult *wt[10];
 
     for (int i = 0; i < 10; i ++)
@@ -271,12 +293,102 @@ void MainWindow::setSearchResult()
         V->addWidget(wt[i]);
     }
     //ui->scrollAreaWidgetContents->setStyle();
-    this->setStyleSheet("background-color:rgb(90,90,90)");
-    H->addWidget(leftWidget);
-    H->addWidget(mainWidget);
-    H->addWidget(rightWidget);
-
+   // this->setStyleSheet("background-color:rgb(90,90,90)");
 }
+
+void MainWindow::display_data()
+{
+    delete_layout_widgets(V);
+    qDebug() << "接受到信号，开始展示";
+    searchresult *wt[300];
+    int i = 0;
+    QFile file("./xmlfiles/informations.xml");
+    if (!file.open(QFile::ReadOnly))
+    {
+        wt[i] = new searchresult();
+        qDebug() << "找不到xml文件";
+        QMovie *movie = new QMovie(":/images/404.gif");
+        movie->start();
+        wt[i]->set_movie(movie);
+        wt[i]->set_title( QString::fromStdString("404未找到相关内容!"));
+        V->addWidget(wt[i]);
+        QWidget *ww = new QWidget();
+        V->addWidget(ww);
+        return;
+    }
+
+    QDomDocument doc;
+    //设置test.xml到文档
+    if(!doc.setContent(&file))
+    {
+        file.close();
+        return;
+    }
+    file.close();
+    //返回根节点
+    QDomElement root=doc.documentElement();
+    //qDebug()<<root.nodeName();
+    //获得第一个子节点
+    QDomNode node=root.firstChild();
+
+    /*for (int i = 0; i < 10; i ++)
+    {
+        wt[i] = new searchresult();
+        wt[i] = new searchresult();
+        V->addWidget(wt[i]);
+    }*/
+    while(!node.isNull())  //如果节点不空
+    {
+        if(node.isElement()) //如果节点是元素
+        {
+            //转换为元素
+            QDomElement e=node.toElement();
+            QDomNodeList list=e.childNodes();
+            QString title = list.at(0).toElement().text();
+            QString sub_title = list.at(1).toElement().text();
+            QString type = list.at(2).toElement().text();
+            QString image_path = "./title_images/" + list.at(4).toElement().text();
+
+            wt[i] = new searchresult();
+            QString brief_introduction = list.at(5).toElement().text();
+            qDebug() << "获取数据结束";
+            wt[i]->set_title(title);
+            emit change_title(title);
+            qDebug() << "没问题1";
+            wt[i]->set_sub_title(sub_title);
+            emit change_subtitle(sub_title);
+            qDebug() << "没问题2";
+            wt[i]->set_Icon(image_path);
+            qDebug() << image_path;
+            wt[i]->set_brief_introduction(brief_introduction);
+            emit change_brief(brief_introduction);
+            qDebug() << "没问题3";
+
+            wt[i]->set_type(type);
+            emit change_type(type);
+            qDebug() << "没问题4";
+
+            emit change_imgpath(image_path);
+            V->addWidget(wt[i]);
+            //wt[i] = new searchresult();
+
+            /*for(int i=0;i<list.count();i++)
+            {
+                QDomNode n=list.at(i);
+                if(n.isElement())
+                {
+
+                }
+                    qDebug()<<n.nodeName()<<":"<<n.toElement().text();
+            }*/
+            i = i + 1;
+        }
+        node=node.nextSibling();
+    }
+    QWidget *ww = new QWidget();
+    V->addWidget(ww);
+}
+
 
 void MainWindow::download_data(QString str)
 {
@@ -311,8 +423,26 @@ void MainWindow::download_data(QString str)
      qDebug() << "开始下载数据";
      PyObject_CallObject(pFunhello,args);
      qDebug() << "数据下载完毕";
+     emit finish_download();
      //Py_Finalize();
 }
+
+
+void MainWindow::delete_layout_widgets(QBoxLayout *layout)
+{
+    QLayoutItem *child;
+     while ((child = layout->takeAt(0)) != 0)
+     {
+            //setParent为NULL，防止删除之后界面不消失
+            if(child->widget())
+            {
+                child->widget()->setParent(NULL);
+            }
+
+            delete child;
+     }
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;

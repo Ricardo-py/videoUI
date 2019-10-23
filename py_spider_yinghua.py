@@ -77,13 +77,15 @@ def write(informations):
     for information in informations:
         information_node = doc.createElement("information")
         for key in information.keys():
+            text_node = "";
+            if (key == 'img'):
+                img_name = writeImage(information[key])
+                text_node = doc.createTextNode(img_name)
+            else:
+                text_node = doc.createTextNode(information[key])
             key_node = doc.createElement(key)
-            text_node = doc.createTextNode(information[key])
             key_node.appendChild(text_node)
             information_node.appendChild(key_node)
-            if (key == 'img'):
-                print("开始")
-                writeImage(information[key])
         root_node.appendChild(information_node)
     if not os.path.exists('./xmlfiles'):
         os.mkdir("./xmlfiles")
@@ -100,4 +102,5 @@ def writeImage(img_url):
         os.mkdir("./title_images")
     with open("./title_images" +'/' + img_name,"wb") as f:
         f.write(img_content)
+    return image_name
 
