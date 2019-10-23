@@ -3,18 +3,19 @@ import requests
 from bs4 import BeautifulSoup
 import xml.dom.minidom as Dom
 import json
+import os
+import shutil
 
-def spider():
-    str_origin = "火影忍者"
+def spider(sstr):
+    print("传入的参数为" + sstr)
+    str_origin = sstr
     search_word = str_origin
     url = "http://www.imomoe.io/search.asp"
 
-    data = {"searchword":"火影忍者"}
+    data = {"searchword":search_word}
 
     str_encode = parse.quote(str_origin,encoding='gb2312')
-    print(str_encode)
     data  = parse.urlencode(data,encoding='gb2312').encode()
-    print(data)
 
     headers = {
          "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -64,10 +65,12 @@ def spider():
         else:
             print("不存在")
     if informations != []:
-        write(informations,headers)
+        if os.path.exists("./title_images"):
+            shutil.rmtree("./title_images")
+        write(informations)
 
 
-def write(informations,headers):
+def write(informations):
     doc = Dom.Document()
     root_node = doc.createElement("bangumi_Infomations")
     doc.appendChild(root_node)
@@ -82,16 +85,19 @@ def write(informations,headers):
                 print("开始")
                 writeImage(information[key])
         root_node.appendChild(information_node)
-    with open('../videoUI/xmlfiles/informations.xml', 'wb') as f:
+    if not os.path.exists('./xmlfiles'):
+        os.mkdir("./xmlfiles")
+    with open('./xmlfiles/informations.xml', 'wb') as f:
         f.write(doc.toprettyxml(indent='\t', newl='\n', encoding='utf-8'))
 
 def writeImage(img_url):
-    response = requests.get(img_url)
-    print(response.content)
     print(img_url)
+    response = requests.get(img_url)
     img_content = response.content
     split_img = img_url.split('/')
     img_name = split_img[len(split_img) - 1]
-    with open("../videoUI/title_images" +'/' + img_name,"wb") as f:
+    if not os.path.exists("./title_images"):
+        os.mkdir("./title_images")
+    with open("./title_images" +'/' + img_name,"wb") as f:
         f.write(img_content)
 

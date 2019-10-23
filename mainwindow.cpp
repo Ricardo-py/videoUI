@@ -7,7 +7,9 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDebug>
+#include <iostream>
 
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -278,6 +280,15 @@ void MainWindow::setSearchResult()
 
 void MainWindow::download_data(QString str)
 {
+    if (str == "")
+    {
+        qDebug() << "请输入要搜索的内容";
+        return;
+    }
+    std::string strr = str.toStdString();
+
+    const char* ch = strr.c_str();
+    //cout << ch << endl;
     Py_Initialize();
      if ( !Py_IsInitialized() )
      {
@@ -289,16 +300,18 @@ void MainWindow::download_data(QString str)
              qDebug() << "Cant open python file!\n" << endl;
              return;
          }
-    PyObject* pFunhello= PyObject_GetAttrString(pModule,"spider");  // 这里的spider就是python文件定义的函数
 
+    PyObject* pFunhello= PyObject_GetAttrString(pModule,"spider");  // 这里的spider就是python文件定义的函数
+    //PyObject* args = PyTuple_New(1);
+    PyObject* args = Py_BuildValue("(s)",ch);
      if(!pFunhello){
          qDebug()<<"Get function hello failed"<<endl;
          return;
      }
      qDebug() << "开始下载数据";
-     PyObject_CallFunction(pFunhello,NULL);
+     PyObject_CallObject(pFunhello,args);
      qDebug() << "数据下载完毕";
-     Py_Finalize();
+     //Py_Finalize();
 }
 MainWindow::~MainWindow()
 {
