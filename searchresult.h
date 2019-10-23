@@ -22,9 +22,14 @@ public:
     void set_brief_introduction(QString str);
     void set_type(QString str);
     void set_movie(QMovie* movie);
+    void set_url(QString);
+
+private slots:
+    void on_bangumiName_clicked();
 
 private:
     Ui::searchresult *ui;
+    QString Qurl;
 };
 
 #endif // SEARCHRESULT_H

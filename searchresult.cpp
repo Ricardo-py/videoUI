@@ -2,41 +2,14 @@
 #include "ui_searchresult.h"
 #include <mainwindow.h>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QUrl>
 
 searchresult::searchresult(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::searchresult)
 {
     ui->setupUi(this);
-
-    /*connect(&m,QOverload<QString>::of(&MainWindow::change_title),
-            [=](QString str)
-            {
-                this->set_title(str);
-            });
-    connect(&m,QOverload<QString>::of(&MainWindow::change_subtitle),
-            [=](QString str)
-            {
-                this->set_sub_title(str);
-            });
-
-    connect(&m,QOverload<QString>::of(&MainWindow::change_type),
-            [=](QString str)
-            {
-                this->set_type(str);
-            });
-
-    connect(&m,QOverload<QString>::of(&MainWindow::change_brief),
-            [=](QString str)
-            {
-                this->set_brief_introduction(str);
-            });
-
-    connect(&m,QOverload<QString>::of(&MainWindow::change_imgpath),
-            [=](QString str)
-            {
-                this->set_Icon(str);
-            });*/
 }
 
 void searchresult::set_Icon(QString str)
@@ -73,6 +46,18 @@ void searchresult::set_brief_introduction(QString str)
     ui->brief->setText(str);
 }
 
+
+
+void searchresult::on_bangumiName_clicked()
+{
+    QDesktopServices::openUrl(QUrl(Qurl));
+}
+
+
+void searchresult::set_url(QString str)
+{
+    this->Qurl = str;
+}
 
 searchresult::~searchresult()
 {

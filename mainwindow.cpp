@@ -44,9 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->widget_2,SIGNAL(quitEvent()),this,SLOT(quitEvent()));
     connect(ui->widget_2,SIGNAL(mid_maxEvent()),this,SLOT(mid_maxEvent()));
     connect(ui->widget_2,SIGNAL(minEvent()),this,SLOT(minEvent()));
-   //connect(ui->widget_2,SIGNAL(aboutEvent()),this,SLOT(aboutEvent()));
-   // connect(ui->widget_2,SIGNAL(configEvent()),this,SLOT(configEvent()));
-   // connect(ui->widget_2,SIGNAL(personEvent()),this,SLOT(personEvent()));
     connect(ui->widget_2,QOverload<QString>::of(&titlewid::searchEvent),
             [=](QString str)
             {
@@ -292,14 +289,12 @@ void MainWindow::setSearchResult()
         wt[i] = new searchresult();
         V->addWidget(wt[i]);
     }
-    //ui->scrollAreaWidgetContents->setStyle();
-   // this->setStyleSheet("background-color:rgb(90,90,90)");
 }
 
 void MainWindow::display_data()
 {
+    //删除原来的所有控件
     delete_layout_widgets(V);
-    qDebug() << "接受到信号，开始展示";
     searchresult *wt[300];
     int i = 0;
     QFile file("./xmlfiles/informations.xml");
@@ -312,6 +307,7 @@ void MainWindow::display_data()
         wt[i]->set_movie(movie);
         wt[i]->set_title( QString::fromStdString("404未找到相关内容!"));
         V->addWidget(wt[i]);
+        //添加一个容器，使得结果更加美观
         QWidget *ww = new QWidget();
         V->addWidget(ww);
         return;
@@ -327,16 +323,9 @@ void MainWindow::display_data()
     file.close();
     //返回根节点
     QDomElement root=doc.documentElement();
-    //qDebug()<<root.nodeName();
     //获得第一个子节点
     QDomNode node=root.firstChild();
 
-    /*for (int i = 0; i < 10; i ++)
-    {
-        wt[i] = new searchresult();
-        wt[i] = new searchresult();
-        V->addWidget(wt[i]);
-    }*/
     while(!node.isNull())  //如果节点不空
     {
         if(node.isElement()) //如果节点是元素
@@ -347,44 +336,32 @@ void MainWindow::display_data()
             QString title = list.at(0).toElement().text();
             QString sub_title = list.at(1).toElement().text();
             QString type = list.at(2).toElement().text();
+            QString url = list.at(3).toElement().text();
             QString image_path = "./title_images/" + list.at(4).toElement().text();
 
             wt[i] = new searchresult();
             QString brief_introduction = list.at(5).toElement().text();
-            qDebug() << "获取数据结束";
             wt[i]->set_title(title);
             emit change_title(title);
-            qDebug() << "没问题1";
             wt[i]->set_sub_title(sub_title);
             emit change_subtitle(sub_title);
-            qDebug() << "没问题2";
             wt[i]->set_Icon(image_path);
             qDebug() << image_path;
             wt[i]->set_brief_introduction(brief_introduction);
             emit change_brief(brief_introduction);
-            qDebug() << "没问题3";
 
             wt[i]->set_type(type);
+            wt[i]->set_url(url);
             emit change_type(type);
-            qDebug() << "没问题4";
 
             emit change_imgpath(image_path);
             V->addWidget(wt[i]);
-            //wt[i] = new searchresult();
 
-            /*for(int i=0;i<list.count();i++)
-            {
-                QDomNode n=list.at(i);
-                if(n.isElement())
-                {
-
-                }
-                    qDebug()<<n.nodeName()<<":"<<n.toElement().text();
-            }*/
             i = i + 1;
         }
         node=node.nextSibling();
     }
+    //添加一个容器，使得结果更加美观
     QWidget *ww = new QWidget();
     V->addWidget(ww);
 }
@@ -414,7 +391,6 @@ void MainWindow::download_data(QString str)
          }
 
     PyObject* pFunhello= PyObject_GetAttrString(pModule,"spider");  // 这里的spider就是python文件定义的函数
-    //PyObject* args = PyTuple_New(1);
     PyObject* args = Py_BuildValue("(s)",ch);
      if(!pFunhello){
          qDebug()<<"Get function hello failed"<<endl;
