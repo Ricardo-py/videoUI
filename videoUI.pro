@@ -47,3 +47,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     img.qrc
+
+
+INCLUDEPATH += -I D:\Python\Python37\include
+
+LIBS += -L D:\Python\Python37\libs -lpython37
+
+DISTFILES += \
+    py_spider_yinghua.py

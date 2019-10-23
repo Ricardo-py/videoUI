@@ -40,6 +40,7 @@ private slots:
     void mid_maxEvent();
     void minEvent();
     void moveWindowEvent(QPoint& pos);
+    void download_data(QString s);
 
 protected:
     void paintEvent(QPaintEvent* event);

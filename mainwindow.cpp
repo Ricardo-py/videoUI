@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "searchresult.h"
+#include <QCoreApplication>
+#include <Python.h>
 #include <QPen>
 #include <QPainter>
 #include <QMouseEvent>
@@ -38,6 +40,12 @@ MainWindow::MainWindow(QWidget *parent) :
    //connect(ui->widget_2,SIGNAL(aboutEvent()),this,SLOT(aboutEvent()));
    // connect(ui->widget_2,SIGNAL(configEvent()),this,SLOT(configEvent()));
    // connect(ui->widget_2,SIGNAL(personEvent()),this,SLOT(personEvent()));
+    connect(ui->widget_2,QOverload<QString>::of(&titlewid::searchEvent),
+            [=](QString str)
+            {
+                qDebug() << "lineEdit的内容为:" << str;
+                this->download_data(str);
+            });
     connect(ui->widget_2,SIGNAL(moveWindow(QPoint&)),this,SLOT(moveWindowEvent(QPoint&)));
 }
 
@@ -266,6 +274,31 @@ void MainWindow::setSearchResult()
     H->addWidget(mainWidget);
     H->addWidget(rightWidget);
 
+}
+
+void MainWindow::download_data(QString str)
+{
+    Py_Initialize();
+     if ( !Py_IsInitialized() )
+     {
+         qDebug() << "初始化错误";
+         return;
+     }
+     PyObject* pModule = PyImport_ImportModule("py_spider_yinghua");  // 这里的test_py就是创建的python文件
+     if (!pModule) {
+             qDebug() << "Cant open python file!\n" << endl;
+             return;
+         }
+    PyObject* pFunhello= PyObject_GetAttrString(pModule,"spider");  // 这里的spider就是python文件定义的函数
+
+     if(!pFunhello){
+         qDebug()<<"Get function hello failed"<<endl;
+         return;
+     }
+     qDebug() << "开始下载数据";
+     PyObject_CallFunction(pFunhello,NULL);
+     qDebug() << "数据下载完毕";
+     Py_Finalize();
 }
 MainWindow::~MainWindow()
 {

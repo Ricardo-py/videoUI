@@ -26,10 +26,13 @@ private slots:
     void on_pb_mid_max_clicked();
     void on_pb_min_clicked();
 
+    void on_search_clicked();
+
 signals:
     void quitEvent();
     void mid_maxEvent();
     void minEvent();
+    void searchEvent(QString str);
     void moveWindow(QPoint& pos);
 
 

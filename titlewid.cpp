@@ -91,3 +91,9 @@ void titlewid::mouseMoveEvent(QMouseEvent* event)
          }
      }
  }
+
+void titlewid::on_search_clicked()
+{
+    QString str = ui->lineEdit->text();
+    emit searchEvent(str);
+}
